@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mohd Aamir - Portfolio</title>
+
+  <!-- React, Babel, Tailwind -->
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.22.9/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- AOS: Animate On Scroll -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- AOS Script -->
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+  <script type="text/babel">
+    const { useEffect, useState } = React;
+
+    const Navbar = () => {
+      const [isOpen, setIsOpen] = useState(false);
+      const [activeSection, setActiveSection] = useState('');
+
+      const menuItems = [
+        { label: "About", href: "#about" },
+        { label: "Education", href: "#education" },
+        { label: "Projects", href: "#projects" },
+        { label: "Skills", href: "#skills" },
+        { label: "Achievements", href: "#achievements" },
+        { label: "Contact", href: "#contact" }
+      ];
+
+      const toggleMenu = () => setIsOpen(!isOpen);
+      const closeMenu = () => setIsOpen(false);
+
+      useEffect(() => {
+        const handleScroll = () => {
+          const scrollY = window.scrollY;
+          for (let i = menuItems.length - 1; i >= 0; i--) {
+            const section = document.querySelector(menuItems[i].href);
+            if (section && section.offsetTop <= scrollY + 100) {
+              setActiveSection(menuItems[i].href);
+              break;
+            }
+          }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        handleScroll();
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+
+      return (
+        <nav className="bg-gray-800 text-white p-4 sticky top-0 z-10 shadow">
+          <div className="container mx-auto flex justify-between items-center">
+            <h1 className="text-xl font-bold">Mohd Aamir</h1>
+            <button className="md:hidden" onClick={toggleMenu}>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {isOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+            <ul className="hidden md:flex space-x-6">
+              {menuItems.map(item => (
+                <li key={item.href}>
+                  <a href={item.href} className={`hover:text-blue-400 ${activeSection === item.href ? "text-blue-400 font-semibold" : ""}`}>
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {isOpen && (
+            <ul className="md:hidden mt-4 space-y-2 text-center">
+              {menuItems.map(item => (
+                <li key={item.href}>
+                  <a href={item.href} onClick={closeMenu} className={`block py-2 hover:text-blue-400 ${activeSection === item.href ? "text-blue-400 font-semibold" : ""}`}>
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </nav>
+      );
+    };
+
+    const About = () => (
+      <section id="about" className="py-16 bg-gray-100" data-aos="fade-up">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-6">About Me</h2>
+          <img
+            src="Profile_Pic.jpg"
+            alt="Mohd Aamir"
+            className="w-32 h-32 rounded-full mx-auto mb-6 object-cover"
+          />
+          <p className="text-lg max-w-2xl mx-auto">
+            I am an M.Tech student in Computer Science and Engineering at IIT Indore, passionate about deep learning, computer vision, and NLP...
+          </p>
+        </div>
+      </section>
+    );
+
+    const Education = () => {
+      const education = [
+        { degree: "M.Tech (CSE)", institute: "IIT Indore", cgpa: "8.68", year: "2024-Present" },
+        { degree: "B.Tech (CSE)", institute: "PSIT Kanpur", cgpa: "8.32", year: "2020-2024" },
+        { degree: "Senior Secondary", institute: "CBSE Board", cgpa: "89.00%", year: "2019" },
+        { degree: "Secondary", institute: "CBSE Board", cgpa: "10.0", year: "2017" }
+      ];
+
+      return (
+        <section id="education" className="py-16" data-aos="fade-left">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-6 text-center">Education</h2>
+            <div className="space-y-6">
+              {education.map((edu, index) => (
+                <div key={index} className="bg-white rounded-lg shadow-lg p-6">
+                  <h3 className="text-xl font-semibold">{edu.degree}</h3>
+                  <p className="text-gray-600">{edu.institute}</p>
+                  <p className="text-gray-600">CGPA/Percentage: {edu.cgpa}</p>
+                  <p className="text-gray-600">Year: {edu.year}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    };
+
+    const ProjectCard = ({ title, description, duration, link }) => (
+      <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
+        <h3 className="text-xl font-semibold mb-2">{title}</h3>
+        <p className="text-gray-600 mb-2">{description}</p>
+        <p className="text-gray-500 text-sm mb-4">{duration}</p>
+        {link && (
+          <a href={link} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">
+            View Project
+          </a>
+        )}
+      </div>
+    );
+
+    const Projects = () => {
+      const projects = [
+        {
+          title: "Polyp Detection",
+          description: "YOLO model for polyp detection in colonoscopy images.",
+          duration: "May 2023 - Jun 2024",
+          link: "https://github.com/mohdaamir/polyp-detection"
+        },
+        {
+          title: "TuneNest",
+          description: "Music app with hybrid recommendation system.",
+          duration: "Aug 2024 - Nov 2024",
+          link: ""
+        },
+        {
+          title: "Pneumonia Detection with ViT",
+          description: "ViT-based model for pneumonia detection.",
+          duration: "Feb 2025 - Apr 2025",
+          link: "https://github.com/mohdaamir/pneumonia-detection"
+        },
+        {
+          title: "Multimodal Emotion Analysis",
+          description: "ViT + RoBERTa based gated attention emotion classifier.",
+          duration: "Jan 2025 - Present",
+          link: "https://github.com/mohdaamir/emotion-analysis"
+        }
+      ];
+
+      return (
+        <section id="projects" className="py-16 bg-gray-100" data-aos="fade-right">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-6 text-center">Projects</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {projects.map((project, index) => (
+                <ProjectCard key={index} {...project} />
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    };
+
+    const Skills = () => {
+      const skills = [
+        "C/C++", "Python", "NumPy", "Pandas", "PyTorch", "TensorFlow", "Computer Vision", "LangChain",
+        "NLP", "DBMS", "SQL", "Vector DBs", "Problem Solving", "Team Management"
+      ];
+      return (
+        <section id="skills" className="py-16" data-aos="zoom-in">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold mb-6">Skills</h2>
+            <div className="flex flex-wrap justify-center gap-4">
+              {skills.map((skill, index) => (
+                <span key={index} className="bg-blue-500 text-white px-4 py-2 rounded-full">{skill}</span>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    };
+
+    const Achievements = () => {
+      const achievements = [
+        "Scored 671/1000 in GATE 2024 (CS)",
+        "150th AIR in Naukri Ring of Honor Exam (2nd at IIT Indore)"
+      ];
+      return (
+        <section id="achievements" className="py-16 bg-gray-100" data-aos="fade-up">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold mb-6">Achievements</h2>
+            <ul className="list-disc list-inside text-lg max-w-2xl mx-auto">
+              {achievements.map((a, i) => <li key={i}>{a}</li>)}
+            </ul>
+          </div>
+        </section>
+      );
+    };
+
+    const Contact = () => (
+      <section id="contact" className="py-16" data-aos="fade-up">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-6">Contact</h2>
+          <p className="text-lg max-w-2xl mx-auto">
+            Email me at <a href="mailto:mohd23506@gmail.com" className="text-blue-500 hover:underline">mohd23506@gmail.com</a><br />
+            Connect on <a href="https://linkedin.com/in/mohd-aamir-095933128" className="text-blue-500 hover:underline" target="_blank">LinkedIn</a> or view my work on <a href="https://github.com/mohdaamir" className="text-blue-500 hover:underline" target="_blank">GitHub</a>.
+          </p>
+        </div>
+      </section>
+    );
+
+    const Footer = () => (
+      <footer className="bg-gray-800 text-white py-4">
+        <div className="container mx-auto text-center">
+          <p>© 2025 Mohd Aamir. All rights reserved.</p>
+        </div>
+      </footer>
+    );
+
+    const App = () => {
+      useEffect(() => {
+        AOS.init({ duration: 800, once: true });
+      }, []);
+      return (
+        <div>
+          <Navbar />
+          <About />
+          <Education />
+          <Projects />
+          <Skills />
+          <Achievements />
+          <Contact />
+          <Footer />
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
